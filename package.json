@@ -1,0 +1,16 @@
+{
+    "name": "greenfield-api-reviews",
+    "author": "Matt Engel",
+    "version": "1.0.0",
+    "description": "API for ecommerce site reviews",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon server/index.js"
+    },
+    "dependencies": {
+        "express": "^4.17.1",
+        "body-parser": "^1.19.0",
+        "nodemon": "^2.0.4",
+        "pg": "^8.3.2"
+    }
+}
