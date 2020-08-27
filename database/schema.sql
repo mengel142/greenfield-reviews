@@ -1,9 +1,10 @@
 
-DROP DATABASE IF EXISTS greenfield_reviews;
+-- DROP DATABASE IF EXISTS greenfield_reviews;
 
-CREATE DATABASE greenfield_reviews;
+-- CREATE DATABASE greenfield_reviews;
 
 \c greenfield_reviews;
+
 
 CREATE TABLE reviews (
   id SERIAL PRIMARY KEY,
@@ -20,11 +21,13 @@ CREATE TABLE reviews (
   helpfulness INTEGER DEFAULT 0
 );
 
+
 CREATE TABLE characteristics (
   id SERIAL PRIMARY KEY,
   product_id INTEGER,
   name VARCHAR
 );
+
 
 CREATE TABLE review_characteristic (
   id SERIAL PRIMARY KEY,
@@ -38,3 +41,5 @@ CREATE TABLE photos (
   review_id INTEGER,
   url VARCHAR
 );
+
+INSERT INTO characteristics (product_id, name) VALUES (1000, 'Hello World!');
