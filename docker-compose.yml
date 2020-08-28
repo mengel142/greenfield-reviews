@@ -3,7 +3,8 @@ version: '3.8'
 services:
     nodejs:
         container_name: nodejs
-        image: nodejs:latest
+        image: nodejs
+        version: stable
         build:
             context: .
             dockerfile: dockerfile

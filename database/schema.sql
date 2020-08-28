@@ -42,4 +42,3 @@ CREATE TABLE IF NOT EXISTS photos (
   url VARCHAR
 );
 
-INSERT INTO characteristics (product_id, name) VALUES (1000, 'Hello World!');
