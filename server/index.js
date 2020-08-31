@@ -3,17 +3,13 @@ const bodyParser = require("body-parser");
 
 const app = express();
 const port = process.env.PORT || 3000;
-const { pool } = require('../database/index.js');
+const pool = require('../database/index.js');
+const router = require('./router');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use('/', router);
 
-app.get('/', (req, res) => {
-    return pool.query('SELECT * FROM characteristics;')
-        .then(({rows}) => {
-            res.json(rows[0].name);
-        });
-});
 
 app.listen(port, () => {
     console.log(`listening on port ${port}`);
