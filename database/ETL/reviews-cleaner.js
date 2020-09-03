@@ -2,19 +2,11 @@
 const fs = require('fs');
 const path = require('path');
 const csv = require('fast-csv');
-const pool = require('../index.js');
 const reviews = path.resolve(__dirname, '../../review-data/reviews.csv');
 
         
 
-let ws = fs.createWriteStream('clean_reviews.csv');
-// fs.createReadStream('test.csv')
-//     .pipe(csv.parse({ headers: true }))
-//     .on('error', error => console.log(error))
-//     .on('data', row => {
-//         if ()
-//     })
-//     .on('end', () => console.log('finished'));
+let ws = fs.createWriteStream('clean_reviews2.csv');
 
 fs.createReadStream(reviews)
     .pipe(csv.parse({ headers: true }))
@@ -24,14 +16,14 @@ fs.createReadStream(reviews)
             id: Number(row.id),
             product_id: Number(row.product_id),
             rating: Number(row.rating),
-            date: row.date ? row.date : "",
-            summary: row.summary ? row.summary : "",
-            body: row.body ? String(row.body) : "",
-            recommend: !isNaN(row.recommend) ? row.recommend : 0,
-            reported: !isNaN(row.reported) ? row.reported : 0,
-            reviewer_name: row.reviewer_name ? row.reviewer_name : "",
-            reviewer_email: row.reviewer_email ? row.reviewer_email : "",
-            response: row.response && (row.response !== 'null') ? row.response : "",
+            date: row.date ? String(row.date) : '',
+            summary: row.summary ? String(row.summary) : '',
+            body: row.body ? String(row.body) : '',
+            recommend: !isNaN(row.recommend) ? Number(row.recommend) : 0,
+            reported: !isNaN(row.reported) ? Number(row.reported) : 0,
+            reviewer_name: row.reviewer_name ? String(row.reviewer_name) : '',
+            reviewer_email: row.reviewer_email ? String(row.reviewer_email) : '',
+            response: row.response && (row.response !== 'null') ? row.response : null,
             helpfulness: row.helpfulness ? Number(row.helpfulness) : 0
         }
     })
@@ -40,4 +32,6 @@ fs.createReadStream(reviews)
     .on('finish', () => {
         console.log('finished');
     });
+    
+
     

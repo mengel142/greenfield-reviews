@@ -9,7 +9,7 @@ var pool = new Pool({
     password: "pawscat",
     port: 5432,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000
+    connectionTimeoutMillis: 20000
 })
 // .connect()
 // .then(console.log('connected to greenfield'))
