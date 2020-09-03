@@ -7,7 +7,7 @@ CREATE DATABASE greenfield_reviews;
 
 
 CREATE TABLE IF NOT EXISTS reviews (
-  id INTEGER PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   product_id INTEGER,
   rating INTEGER,
   date DATE,
@@ -23,22 +23,23 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 
 CREATE TABLE IF NOT EXISTS characteristics (
-  id INTEGER PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   product_id INTEGER,
   name VARCHAR
 );
 
 
-CREATE TABLE IF NOT EXISTS review_characteristic (
-  id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS characteristic_reviews (
+  id SERIAL PRIMARY KEY,
   characteristic_id INTEGER,
   review_id INTEGER,
   value INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS photos (
-  id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS reviews_photos (
+  id SERIAL PRIMARY KEY,
   review_id INTEGER,
   url VARCHAR
 );
+
 
