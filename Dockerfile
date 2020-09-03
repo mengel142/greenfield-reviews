@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:14
 WORKDIR /greenfield-reviews
 COPY package.json .
 RUN npm install
