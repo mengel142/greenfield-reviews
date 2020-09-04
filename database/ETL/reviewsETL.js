@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const pool = require('../index.js');
 const copyFrom = require('pg-copy-streams').from
-const file = path.resolve(__dirname, './clean_reviews.csv');
+const file = path.resolve(__dirname, '../../review-data/clean_reviews.csv');
 
 
 

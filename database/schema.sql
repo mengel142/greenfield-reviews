@@ -19,12 +19,6 @@ CREATE TABLE IF NOT EXISTS reviews (
   reviewer_email VARCHAR,
   response VARCHAR DEFAULT NULL,
   helpfulness INTEGER DEFAULT 0
-  fit INTEGER DEFAULT NULL,
-  length INTEGER DEFAULT NULL,
-  comfort INTEGER DEFAULT NULL,
-  quality INTEGER DEFAULT NULL,
-  width INTEGER DEFAULT NULL,
-
 );
 
 
@@ -56,4 +50,4 @@ CREATE INDEX char_revProd_idx ON characteristic_reviews (review_id);
 CREATE INDEX char_rev_char_idx ON characteristic_reviews (characteristic_id);
 CREATE INDEX char_rev_idx ON characteristic_reviews (id);
 CREATE INDEX photoRev_idx ON reviews_photos (review_id);
-CREATE INDEX photo_idx ON reviews_photos (idx);
+CREATE INDEX photo_idx ON reviews_photos (id);
