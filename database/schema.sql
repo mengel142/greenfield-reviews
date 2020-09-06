@@ -5,8 +5,8 @@ CREATE DATABASE greenfield_reviews;
 
 \c greenfield_reviews;
 
-
-CREATE TABLE IF NOT EXISTS reviews (
+DROP TABLE IF EXISTS reviews;
+CREATE TABLE reviews (
   id SERIAL PRIMARY KEY,
   product_id INTEGER,
   rating INTEGER,
@@ -21,33 +21,32 @@ CREATE TABLE IF NOT EXISTS reviews (
   helpfulness INTEGER DEFAULT 0
 );
 
-
-CREATE TABLE IF NOT EXISTS characteristics (
+DROP TABLE IF EXISTS characterisitics;
+CREATE TABLE characteristics (
+  id SERIAL PRIMARY KEY,
+  product_id INTEGER,
+  name VARCHAR
+);
+CREATE TABLE test (
   id SERIAL PRIMARY KEY,
   product_id INTEGER,
   name VARCHAR
 );
 
 
-CREATE TABLE IF NOT EXISTS characteristic_reviews (
+DROP TABLE IF EXISTS characteristic_reviews;
+CREATE TABLE characteristic_reviews (
   id SERIAL PRIMARY KEY,
   characteristic_id INTEGER,
   review_id INTEGER,
   value INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS reviews_photos (
+DROP TABLE IF EXISTS reviews_photos;
+CREATE TABLE reviews_photos (
   id SERIAL PRIMARY KEY,
   review_id INTEGER,
   url VARCHAR
 );
 
-CREATE INDEX revProd_idx ON reviews (product_id);
-CREATE INDEX rev_idx ON reviews (id);
-CREATE INDEX charProd_idx ON characteristics (product_id);
-CREATE INDEX char_idx ON charateristics (id);
-CREATE INDEX char_revProd_idx ON characteristic_reviews (review_id);
-CREATE INDEX char_rev_char_idx ON characteristic_reviews (characteristic_id);
-CREATE INDEX char_rev_idx ON characteristic_reviews (id);
-CREATE INDEX photoRev_idx ON reviews_photos (review_id);
-CREATE INDEX photo_idx ON reviews_photos (id);
+

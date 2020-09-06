@@ -1,7 +1,5 @@
 node_modules
 package-lock.json
-.gitignore
 Npm-debug.log
-review-data
 reviews-deployed
-.env
+review-data

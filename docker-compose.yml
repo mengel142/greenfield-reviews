@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
     server:
-        build: ./
+        container_name: server
+        build: .
         ports:
-            - 80:3000
+            - 3000:3000
         depends_on:
             - db
     db: 
@@ -19,4 +20,4 @@ services:
             POSTGRES_PASSWORD: pawscat
             POSTGRES_USER: postgres
             POSTGRES_DB: greenfield_reviews
-    
+        
