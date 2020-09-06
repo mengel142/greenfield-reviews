@@ -1,5 +1,15 @@
 \c greenfield_reviews;
 
+CREATE INDEX revProd_idx ON reviews (product_id);
+CREATE INDEX rev_idx ON reviews (id);
+CREATE INDEX charProd_idx ON characteristics (product_id);
+CREATE INDEX char_idx ON charateristics (id);
+CREATE INDEX char_revProd_idx ON characteristic_reviews (review_id);
+CREATE INDEX char_rev_char_idx ON characteristic_reviews (characteristic_id);
+CREATE INDEX char_rev_idx ON characteristic_reviews (id);
+CREATE INDEX photoRev_idx ON reviews_photos (review_id);
+CREATE INDEX photo_idx ON reviews_photos (id);
+
 ALTER TABLE reviews ADD COLUMN photos text[];
 
 UPDATE reviews SET photos = array(
@@ -8,9 +18,6 @@ FROM reviews_photos
 WHERE reviews_photos.review_id = reviews.id
 );
 
-
-ALTER TABLE characteristics ADD COLUMN review_id INTEGER;
-ALTER TABLE characteristics ADD COLUMN value INTEGER;
 
 ALTER TABLE characteristic_reviews ADD COLUMN product_id INTEGER;
 ALTER TABLE characteristic_reviews ADD COLUMN characteristic_name VARCHAR;

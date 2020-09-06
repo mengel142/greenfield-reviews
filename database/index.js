@@ -1,13 +1,13 @@
 const { Pool, Client } = require('pg');
-const CONFIG = require('./config.js');
 require('dotenv').config();
 
+
 var pool = new Pool({
-    user: "postgres",
-    host: 'localhost',
-    database: "greenfield_reviews",
-    password: "pawscat",
+    user: 'postgres',
+    database: 'greenfield_reviews',
+    password: 'pawscat',
     port: 5432,
+    host: 'postgres',
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 20000
 })
