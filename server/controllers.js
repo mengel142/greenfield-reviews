@@ -3,10 +3,10 @@ const models = require('../database/models');
 module.exports = {
 
     getReviews: (req, res) => {
-        let { product_id } = req.params;
-        let { page } = req.query || 0;
-        let { count } = req.query || 5;
-        let { sort } = req.query || 'featured';
+        const product_id = req.params.product_id;
+        const page = req.query.page || 1;
+        const count = req.query.count || 5;
+        const sort = req.query.sort || 'featured';
         models
         .getReviews(product_id, page, count, sort)
         .then(data => {
@@ -16,6 +16,7 @@ module.exports = {
                 count: count,
                 results: data.rows
             };
+            console.log(response);
             res.send(response);
         })
         .catch(err => {
