@@ -11,17 +11,3 @@ app.use('/', router);
 app.listen(port, () => {
     console.log(`listening on port ${port}`);
 });
-
-// let q = 'INSERT INTO reviews (id, product_id, rating) VALUES ($1, $2, $3)';
-//         return pool.connect()
-//             .then(client => {
-//                 return client.query(q, [1, 1, 5])
-//                 .then(res => {
-//                     client.release();
-//                     return res;
-//                 })
-//                 .catch(err => {
-//                     client.release();
-//                     console.log(err.stack);
-//                 })
-//             })
