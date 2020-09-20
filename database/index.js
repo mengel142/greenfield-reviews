@@ -7,9 +7,7 @@ var pool = new Pool({
     host: process.env.PGHOST,
     database: process.env.PGDATABASE,
     password: process.env.PGPASSWORD,
-    port: process.env.PGPORT,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 20000
+    port: process.env.PGPORT
 })
 // .connect()
 // .then(console.log('connected to greenfield'))
