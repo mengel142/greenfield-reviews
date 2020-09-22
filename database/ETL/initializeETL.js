@@ -3,7 +3,7 @@ const characteristicsETL = require('./characteristicsETL');
 const characteristicReviewsETL = require('./characteristicReviewsETL');
 const photosETL = require('./photosETL');
 const createSchema = require('./schema.js');
-const transformDB = require('./transform.js');
+
 
 createSchema()
     .then((data) => {
