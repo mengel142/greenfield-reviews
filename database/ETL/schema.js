@@ -6,6 +6,7 @@ const createSchema = () => {
             .then(client => {
                 console.log('connected to greenfield_reviews');
                 client.release();
+                pool.end();
             })
             .catch(err => {
                 console.log('error connecting to greenfield_reviews', err);
