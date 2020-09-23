@@ -157,12 +157,24 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Created indexes.');
-                    await wait(5000);
+                    await wait(10000);
                     console.log('Adding photos to reviews...');
                 })(); 
             })
             .then((res) => {
-                return pool.query('ALTER TABLE reviews ADD COLUMN photos text[];');
+                return pool.connect()
+                .then(client => {
+                    return client.query('ALTER TABLE reviews ADD COLUMN photos text[];')
+                    .then(res => {
+                        client.release();
+                        return res;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })
+                
             })
             .then((res) => {
                 return pool.connect()
@@ -174,7 +186,7 @@ const transformDB = () => {
                         );`)
                         .then(res => {
                             client.release();
-                            return;
+                            return res;
                         })
                         .catch(err => {
                             client.release();
@@ -191,7 +203,7 @@ const transformDB = () => {
                     return client.query('DROP TABLE IF EXISTS reviews_photos;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -208,7 +220,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Dropped photos table.');
-                    await wait(5000);
+                    await wait(10000);
                     console.log('Altering characterisitics_reviews tables...');
                 })();
             })
@@ -218,7 +230,7 @@ const transformDB = () => {
                     return client.query('ALTER TABLE characteristic_reviews ADD COLUMN product_id INTEGER;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -233,7 +245,7 @@ const transformDB = () => {
                     return client.query('ALTER TABLE characteristic_reviews ADD COLUMN characteristic_name VARCHAR;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -244,7 +256,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Altered characteristic_reviews table.');
-                    await wait(5000);
+                    await wait(20000);
                     console.log('Combining characterisitics tables...');
                 })();
             })
@@ -258,7 +270,7 @@ const transformDB = () => {
                     );`)
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -276,7 +288,7 @@ const transformDB = () => {
                     );`)
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -288,7 +300,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Combined characteristics and characteristic_reviews table.');
-                    await wait(5000);
+                    await wait(10000);
                     console.log('Dropping characteristics table...');
                 })();
             })
@@ -298,7 +310,7 @@ const transformDB = () => {
                     return client.query('DROP TABLE IF EXISTS characteristics;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -315,7 +327,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Dropped characteristics table.');
-                    await wait(5000);
+                    await wait(10000);
                     console.log('Adding characteristics columns to reviews table...');
                 })();
             })
@@ -325,7 +337,7 @@ const transformDB = () => {
                     return client.query('ALTER TABLE reviews ADD COLUMN fit INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -340,7 +352,7 @@ const transformDB = () => {
                     return client.query('ALTER TABLE reviews ADD COLUMN length INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -355,7 +367,7 @@ const transformDB = () => {
                     return client.query('ALTER TABLE reviews ADD COLUMN comfort INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -370,7 +382,7 @@ const transformDB = () => {
                     return client.query('ALTER TABLE reviews ADD COLUMN quality INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -385,7 +397,7 @@ const transformDB = () => {
                     return client.query('ALTER TABLE reviews ADD COLUMN width INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -400,7 +412,7 @@ const transformDB = () => {
                     return client.query('ALTER TABLE reviews ADD COLUMN size INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -417,7 +429,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Added characteristic columns to reviews.');
-                    await wait(10000);
+                    await wait(20000);
                     console.log('Now adding fit values to reviews table...');
                 })();
             })
@@ -431,7 +443,7 @@ const transformDB = () => {
                     );`)
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -449,7 +461,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Added fit values to reviews table.');
-                    await wait(10000);
+                    await wait(20000);
                     console.log('Now adding length values to reviews table...');
                 })();
             })
@@ -463,7 +475,7 @@ const transformDB = () => {
                     );`)
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -480,7 +492,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Added length values to reviews table.');
-                    await wait(10000);
+                    await wait(20000);
                     console.log('Now adding comfort values to reviews table...');
                 })();
             })
@@ -494,15 +506,13 @@ const transformDB = () => {
                     );`)
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
                         throw err;
                     })
                 })
-                
-
             })
             .catch(err => {
                 console.log('Error adding comfort values to reviews', err);
@@ -512,7 +522,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Added comfort values to reviews table.');
-                    await wait(10000);
+                    await wait(20000);
                     console.log('Now adding quality values to reviews table...');
                 })();
             })
@@ -526,7 +536,7 @@ const transformDB = () => {
                     );`)
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -543,7 +553,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Added quality values to reviews table.');
-                    await wait(10000);
+                    await wait(20000);
                     console.log('Now adding width values to reviews table...');
                 })();
             })
@@ -557,7 +567,7 @@ const transformDB = () => {
                     );`)
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -574,7 +584,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Added width values to reviews table.');
-                    await wait(10000);
+                    await wait(20000);
                     console.log('Now adding size values to reviews table...');
                 })();
             })
@@ -588,7 +598,7 @@ const transformDB = () => {
                     );`)
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
@@ -600,7 +610,7 @@ const transformDB = () => {
             .then((res) => {
                 (async () => {
                     console.log('Added size values to reviews table.');
-                    await wait(5000);
+                    await wait(20000);
                     console.log('Added characteristics to reviews table, dropping characteristics...');
                 })();
             })
@@ -610,7 +620,7 @@ const transformDB = () => {
                     return client.query('DROP TABLE IF EXISTS characteristic_reviews;')
                     .then(res => {
                         client.release();
-                        return;
+                        return res;
                     })
                     .catch(err => {
                         client.release();
