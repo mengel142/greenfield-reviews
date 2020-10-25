@@ -7,17 +7,17 @@ services:
         ports:
             - 3000:3000
         depends_on:
-            - db
-    db: 
+            - postgres
+    postgres: 
         container_name: postgres
-        image: postgres:latest
+        image: postgres:12
         restart: always
         ports:
             - 5432:5432
         volumes:
             - './reviews-deployed/:/var/lib/postgresql/data'
         environment:
-            POSTGRES_PASSWORD: pawscat
-            POSTGRES_USER: postgres
-            POSTGRES_DB: greenfield_reviews
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_DB: ${POSTGRES_DATABASE}
         
