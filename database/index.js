@@ -3,14 +3,11 @@ require('dotenv').config();
 
 
 var pool = new Pool({
-    user: 'postgres',
-    host: 'postgres',
-    database: 'greenfield_reviews',
-    password: 'pawscat',
-    port: 5432
-})
-// .connect()
-// .then(console.log('connected to greenfield'))
-// .catch(err => console.log(err));
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT
+});
 
 module.exports = pool;

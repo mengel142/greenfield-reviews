@@ -6,118 +6,13 @@ const transformDB = () => {
     return new Promise((resolve, reject) => {
         return pool.connect()
             .then(client => {
-                console.log('connected to greenfield_reviews, adding indexes');
+                console.log('connected to greenfield_reviews. Adding photos to reviews...');
                 client.release();
             })
             .catch(err => {
                 console.log('error connecting to greenfield_reviews', err);
                 pool.end();
                 reject(err);
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query('CREATE INDEX revProd_idx ON reviews (product_id);')
-                    .then(res => {
-                        client.release();
-                        return;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-                
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query('CREATE INDEX rev_idx ON reviews (id);')
-                    .then(res => {
-                        client.release();
-                        return;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                    
-                })
-                
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query('CREATE INDEX charProd_idx ON characteristics (product_id);')
-                    .then(res => {
-                        client.release();
-                        return;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-                
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query('CREATE INDEX char_idx ON characteristics (id);')
-                    .then(res => {
-                        client.release();
-                        return;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-                
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query('CREATE INDEX char_revProd_idx ON characteristic_reviews (review_id);')
-                    .then(res => {
-                        client.release();
-                        return;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-                
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query('CREATE INDEX char_rev_char_idx ON characteristic_reviews (characteristic_id);')
-                    .then(res => {
-                        client.release();
-                        return;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query('CREATE INDEX char_rev_idx ON characteristic_reviews (id);')
-                    .then(res => {
-                        client.release();
-                        return;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-                
             })
             .then((res) => {
                 return pool.connect()
@@ -147,19 +42,6 @@ const transformDB = () => {
                         throw err;
                     })
                 })
-                
-            })
-            .catch(err => {
-                console.log('error creating indexes', err);
-                pool.end();
-                reject(err);
-            })
-            .then((res) => {
-                (async () => {
-                    console.log('Created indexes.');
-                    await wait(10000);
-                    console.log('Adding photos to reviews...');
-                })(); 
             })
             .then((res) => {
                 return pool.connect()
@@ -180,7 +62,7 @@ const transformDB = () => {
                 return pool.connect()
                 .then(client => {
                     return client.query(`UPDATE reviews SET photos = array(
-                        SELECT reviews_photos.url
+                        SELECT url
                         FROM reviews_photos
                         WHERE reviews_photos.review_id = reviews.id
                         );`)
@@ -213,7 +95,7 @@ const transformDB = () => {
                 
             })
             .catch(err => {
-                console.log('Error adding photo table to reviews reviews', err);
+                console.log('Error adding photo table to reviews', err);
                 pool.end();
                 reject(err);
             })
@@ -221,8 +103,36 @@ const transformDB = () => {
                 (async () => {
                     console.log('Dropped photos table.');
                     await wait(10000);
-                    console.log('Altering characterisitics_reviews tables...');
+                    console.log('Adding product_ids to characterisitic_reviews table...');
                 })();
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
+                    return client.query('CREATE INDEX char_idx ON characteristics (id);')
+                    .then(res => {
+                        client.release();
+                        return;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                }) 
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
+                    return client.query('CREATE INDEX char_rev_char_idx ON characteristic_reviews (characteristic_id);')
+                    .then(res => {
+                        client.release();
+                        return;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })
             })
             .then((res) => {
                 return pool.connect()
@@ -242,6 +152,31 @@ const transformDB = () => {
             .then((res) => {
                 return pool.connect()
                 .then(client => {
+                    return client.query(`UPDATE characteristic_reviews SET product_id = (
+                            SELECT product_id
+                            FROM characteristics
+                            WHERE characteristics.id = characteristic_reviews.characteristic_id
+                            );`)
+                    .then(res => {
+                        client.release();
+                        return res;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })
+            })
+            .then((res) => {
+                (async () => {
+                    console.log('Added product_id to characteristic_reviews.');
+                    await wait(10000);
+                    console.log('Adding characteristic_name to characterisitic_reviews table...');
+                })();
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
                     return client.query('ALTER TABLE characteristic_reviews ADD COLUMN characteristic_name VARCHAR;')
                     .then(res => {
                         client.release();
@@ -254,35 +189,10 @@ const transformDB = () => {
                 }) 
             })
             .then((res) => {
-                (async () => {
-                    console.log('Altered characteristic_reviews table.');
-                    await wait(20000);
-                    console.log('Combining characterisitics tables...');
-                })();
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query(`UPDATE characteristic_reviews SET product_id = (
-                        SELECT characteristics.product_id
-                        FROM characteristics
-                        WHERE characteristics.id = characteristic_reviews.characteristic_id
-                    );`)
-                    .then(res => {
-                        client.release();
-                        return res;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-            })
-            .then((res) => {
                 return pool.connect()
                 .then(client => {
                     return client.query(`UPDATE characteristic_reviews SET characteristic_name = (
-                        SELECT characteristics.name
+                        SELECT name
                         FROM characteristics
                         WHERE characteristics.id = characteristic_reviews.characteristic_id
                     );`)
@@ -328,8 +238,37 @@ const transformDB = () => {
                 (async () => {
                     console.log('Dropped characteristics table.');
                     await wait(10000);
-                    console.log('Adding characteristics columns to reviews table...');
+                    console.log('Adding fit to reviews table...');
                 })();
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
+                    return client.query('CREATE INDEX rev_idx ON reviews (id);')
+                    .then(res => {
+                        client.release();
+                        return;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
+                    return client.query('CREATE INDEX char_revProd_idx ON characteristic_reviews (review_id);')
+                    .then(res => {
+                        client.release();
+                        return;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })
+                
             })
             .then((res) => {
                 return pool.connect()
@@ -349,6 +288,82 @@ const transformDB = () => {
             .then((res) => {
                 return pool.connect()
                 .then(client => {
+                    return client.query(`UPDATE reviews SET fit = (
+                        SELECT value
+                        FROM characteristic_reviews
+                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Fit'
+                        );`)
+                    .then(res => {
+                        client.release();
+                        return res;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                    
+                })
+                
+            })
+            .then((res) => {
+                (async () => {
+                    console.log('Added fit to reviews table.');
+                    await wait(20000);
+                    console.log('Adding comfort to reviews table...');
+                })();
+            })
+            .catch(err => {
+                console.log('Error adding fit values to reviews', err);
+                pool.end();
+                reject(err);
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
+                    return client.query('ALTER TABLE reviews ADD COLUMN comfort INTEGER DEFAULT NULL;')
+                    .then(res => {
+                        client.release();
+                        return res;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })    
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
+                    return client.query(`UPDATE reviews SET comfort = (
+                        SELECT value
+                        FROM characteristic_reviews
+                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Comfort'
+                        );`)
+                    .then(res => {
+                        client.release();
+                        return res;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })
+            })
+            .then((res) => {
+                (async () => {
+                    console.log('Added comfort to reviews table.');
+                    await wait(10000);
+                    console.log('Now adding length to reviews table...');
+                })();
+            })
+            .catch(err => {
+                console.log('Error adding comfort values to reviews', err);
+                pool.end();
+                reject(err);
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
                     return client.query('ALTER TABLE reviews ADD COLUMN length INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
@@ -364,7 +379,11 @@ const transformDB = () => {
             .then((res) => {
                 return pool.connect()
                 .then(client => {
-                    return client.query('ALTER TABLE reviews ADD COLUMN comfort INTEGER DEFAULT NULL;')
+                    return client.query(`UPDATE reviews SET length = (
+                        SELECT value
+                        FROM characteristic_reviews
+                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Length'
+                        );`)
                     .then(res => {
                         client.release();
                         return res;
@@ -374,7 +393,19 @@ const transformDB = () => {
                         throw err;
                     })
                 })
-                
+
+            })
+            .then((res) => {
+                (async () => {
+                    console.log('Added length to reviews table.');
+                    await wait(10000);
+                    console.log('Now adding quality to reviews table...');
+                })();
+            })
+            .catch(err => {
+                console.log('Error adding length values to reviews', err);
+                pool.end();
+                reject(err);
             })
             .then((res) => {
                 return pool.connect()
@@ -394,6 +425,36 @@ const transformDB = () => {
             .then((res) => {
                 return pool.connect()
                 .then(client => {
+                    return client.query(`UPDATE reviews SET quality = (
+                        SELECT value
+                        FROM characteristic_reviews
+                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Quality'
+                        );`)
+                    .then(res => {
+                        client.release();
+                        return res;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })
+            })
+            .then((res) => {
+                (async () => {
+                    console.log('Added quality to reviews table.');
+                    await wait(10000);
+                    console.log('Now adding width to reviews table...');
+                })();
+            })
+            .catch(err => {
+                console.log('Error adding quality values to reviews', err);
+                pool.end();
+                reject(err);
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
                     return client.query('ALTER TABLE reviews ADD COLUMN width INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
@@ -409,6 +470,36 @@ const transformDB = () => {
             .then((res) => {
                 return pool.connect()
                 .then(client => {
+                    return client.query(`UPDATE reviews SET width = (
+                        SELECT value
+                        FROM characteristic_reviews
+                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Width'
+                        );`)
+                    .then(res => {
+                        client.release();
+                        return res;
+                    })
+                    .catch(err => {
+                        client.release();
+                        throw err;
+                    })
+                })
+            })
+            .then((res) => {
+                (async () => {
+                    console.log('Added width to reviews table.');
+                    await wait(10000);
+                    console.log('Now adding size to reviews table...');
+                })();
+            })
+            .catch(err => {
+                console.log('Error adding width values to reviews', err);
+                pool.end();
+                reject(err);
+            })
+            .then((res) => {
+                return pool.connect()
+                .then(client => {
                     return client.query('ALTER TABLE reviews ADD COLUMN size INTEGER DEFAULT NULL;')
                     .then(res => {
                         client.release();
@@ -419,183 +510,15 @@ const transformDB = () => {
                         throw err;
                     })
                 })
-                
-            })
-            .catch(err => {
-                console.log('Error adding characteristics', err);
-                pool.end();
-                reject(err);
-            })
-            .then((res) => {
-                (async () => {
-                    console.log('Added characteristic columns to reviews.');
-                    await wait(20000);
-                    console.log('Now adding fit values to reviews table...');
-                })();
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query(`UPDATE reviews SET fit = (
-                        SELECT characteristic_reviews.value
-                        FROM characteristic_reviews
-                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Fit'
-                    );`)
-                    .then(res => {
-                        client.release();
-                        return res;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                    
-                })
-                
-            })
-            .catch(err => {
-                console.log('Error adding fit values to reviews', err);
-                pool.end();
-                reject(err);
-            })
-            .then((res) => {
-                (async () => {
-                    console.log('Added fit values to reviews table.');
-                    await wait(20000);
-                    console.log('Now adding length values to reviews table...');
-                })();
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query(`UPDATE reviews SET length = (
-                        SELECT characteristic_reviews.value
-                        FROM characteristic_reviews
-                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Length'
-                    );`)
-                    .then(res => {
-                        client.release();
-                        return res;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-
-            })
-            .catch(err => {
-                console.log('Error adding length values to reviews', err);
-                pool.end();
-                reject(err);
-            })
-            .then((res) => {
-                (async () => {
-                    console.log('Added length values to reviews table.');
-                    await wait(20000);
-                    console.log('Now adding comfort values to reviews table...');
-                })();
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query(`UPDATE reviews SET comfort = (
-                        SELECT characteristic_reviews.value
-                        FROM characteristic_reviews
-                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Comfort'
-                    );`)
-                    .then(res => {
-                        client.release();
-                        return res;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-            })
-            .catch(err => {
-                console.log('Error adding comfort values to reviews', err);
-                pool.end();
-                reject(err);
-            })
-            .then((res) => {
-                (async () => {
-                    console.log('Added comfort values to reviews table.');
-                    await wait(20000);
-                    console.log('Now adding quality values to reviews table...');
-                })();
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query(`UPDATE reviews SET quality = (
-                        SELECT characteristic_reviews.value
-                        FROM characteristic_reviews
-                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Quality'
-                    );`)
-                    .then(res => {
-                        client.release();
-                        return res;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-
-            })
-            .catch(err => {
-                console.log('Error adding quality values to reviews', err);
-                pool.end();
-                reject(err);
-            })
-            .then((res) => {
-                (async () => {
-                    console.log('Added quality values to reviews table.');
-                    await wait(20000);
-                    console.log('Now adding width values to reviews table...');
-                })();
-            })
-            .then((res) => {
-                return pool.connect()
-                .then(client => {
-                    return client.query(`UPDATE reviews SET width = (
-                        SELECT characteristic_reviews.value
-                        FROM characteristic_reviews
-                        WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Width'
-                    );`)
-                    .then(res => {
-                        client.release();
-                        return res;
-                    })
-                    .catch(err => {
-                        client.release();
-                        throw err;
-                    })
-                })
-
-            })
-            .catch(err => {
-                console.log('Error adding width values to reviews', err);
-                pool.end();
-                reject(err);
-            })
-            .then((res) => {
-                (async () => {
-                    console.log('Added width values to reviews table.');
-                    await wait(20000);
-                    console.log('Now adding size values to reviews table...');
-                })();
             })
             .then((res) => {
                 return pool.connect()
                 .then(client => {
                     return client.query(`UPDATE reviews SET size = (
-                        SELECT characteristic_reviews.value
+                        SELECT value
                         FROM characteristic_reviews
                         WHERE characteristic_reviews.review_id = reviews.id and characteristic_reviews.characteristic_name = 'Size'
-                    );`)
+                        );`)
                     .then(res => {
                         client.release();
                         return res;
@@ -642,3 +565,61 @@ const transformDB = () => {
 };
 
 module.exports = transformDB;
+
+// .then((res) => {
+//     return pool.connect()
+//     .then(client => {
+//         return client.query('CREATE INDEX revProd_idx ON reviews (product_id);')
+//         .then(res => {
+//             client.release();
+//             return;
+//         })
+//         .catch(err => {
+//             client.release();
+//             throw err;
+//         })
+//     })
+    
+// })
+
+    
+// })
+// .then((res) => {
+//     return pool.connect()
+//     .then(client => {
+//         return client.query('CREATE INDEX charProd_idx ON characteristics (product_id);')
+//         .then(res => {
+//             client.release();
+//             return;
+//         })
+//         .catch(err => {
+//             client.release();
+//             throw err;
+//         })
+//     })
+    
+// })
+
+
+
+// .then((res) => {
+//     return pool.connect()
+//     .then(client => {
+//         return client.query('CREATE INDEX char_rev_idx ON characteristic_reviews (id);')
+//         .then(res => {
+//             client.release();
+//             return;
+//         })
+//         .catch(err => {
+//             client.release();
+//             throw err;
+//         })
+//     })
+    
+// })
+
+// .catch(err => {
+//     console.log('error creating indexes', err);
+//     pool.end();
+//     reject(err);
+// })
