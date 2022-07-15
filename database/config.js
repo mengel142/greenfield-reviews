@@ -6,11 +6,3 @@ module.exports = {
         password: process.env.PGPASSWORD,
         port: process.env.PGPORT
     }
-    // config: {
-    //     user: "postgres",
-    //     host: "localhost",
-    //     database: "greenfield_reviews",
-    //     password: "pawscat",
-    //     port: 5432
-    // }
-};
