@@ -35,17 +35,3 @@ module.exports = characteristicReviewsETL;
 
 
 
-// fs.createReadStream(file)
-//     .pipe(csv.parse({ headers: true }))
-//     .on('data', row => {
-//         pool.query('INSERT INTO review_characteristic (id, characteristic_id, review_id, value) VALUES ($1, $2, $3, $4)', 
-//         [row.id, row.characteristic_id, row.review_id, row.value])
-//     })
-//     .on('error', error => {
-//         console.log(error);
-//     })
-//     .on('end', () => {
-//         console.log('finished uploading characteristic_reviews');
-//     });
-
-
