@@ -38,7 +38,7 @@
 ###### This endpoint retrieves all the review ratings data for each aspect of the product comprised of "Fit", "Length", "Comfort", "Quality", "Width", and "Size".  It then calculates the average rating for each category and returns it to the client.
 
 #### POST '/reviews/:product_id'
-######
+###### This endpoint allows users to post reviews for a specific product including ratings for all characteristics, a summary and description of their experience with the product, and if they would recommend the product.
 
 #### PUT '/reviews/helpful/:review_id'
 ###### This endpoint allows users to indicate if they found a review helpful.
