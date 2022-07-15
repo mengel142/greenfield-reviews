@@ -33,19 +33,3 @@ module.exports = photosETL;
 
 
 
-    // stream
-    // .pipe(new throttle({bps: 1000 * 1024}))
-    // .pipe(csv.parse({ headers: true }))
-    // .on('data', row => {
-    //     pool.query('INSERT INTO photos (id, review_id, url) VALUES ($1, $2, $3)', 
-    //     [row.id, row.review_id, row.url])
-    //     .then(res => { return;})
-    //     .catch(err => console.log(err));
-    // })
-    // .on('error', error => {
-    //     console.log(error);
-    // })
-    // .on('end', () => {
-    //     console.log('finished uploading photos');
-    // });
-
